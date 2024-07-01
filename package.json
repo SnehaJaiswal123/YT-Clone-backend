@@ -1,0 +1,23 @@
+{
+  "name": "youtube",
+  "version": "1.0.0",
+  "description": "Backend YT",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SnehaJaiswal123/YT-Clone-backend.git"
+  },
+  "author": "Sneha jaiswal",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SnehaJaiswal123/YT-Clone-backend/issues"
+  },
+  "homepage": "https://github.com/SnehaJaiswal123/YT-Clone-backend#readme",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
