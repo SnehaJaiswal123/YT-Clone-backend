@@ -1,4 +1,6 @@
-const asyncHandler=(handlerRequest)=>async(req,res,next)=>{
+//  high order function used
+
+const asyncHandler=(handlerRequest)=>async(req,res,next)=>{       
     try{
         await handlerRequest(req,res,next);
     }catch(err){
