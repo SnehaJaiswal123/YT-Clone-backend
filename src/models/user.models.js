@@ -1,4 +1,5 @@
-import mongoose from "../db/connect";
+// import mongoose from "../db/connect.js";
+import mongoose from "mongoose";
 import bcryptjs from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
@@ -33,7 +34,10 @@ const userSchema=new mongoose.Schema({
             type:mongoose.Schema.Types.ObjectId,
             ref:"Video"
         }
-    ]
+    ],
+    refreshToken:{
+        type:String,
+    }
 },
 {
     timestamps:true
@@ -50,15 +54,28 @@ userSchema.methods.isPasswordCorrect = async function(password){
     return  await bcryptjs.compare(this.password,password)
 }
 
-userSchema.methods.generateToken = async function(password){
-      jwt.sign(
+userSchema.methods.generateAccessToken =  function(){
+    return jwt.sign(
         {
             id:this._id,
             email:this.email
         },
-        process.env.JWT_Secret,
+        process.env.AcessToken_Secret,
         {
             expiresIn:"1d"
+        }
+      )
+}
+
+userSchema.methods.generateRefreshToken =  function(){
+    return jwt.sign(
+        {
+            id:this._id,
+            email:this.email
+        },
+        process.env.RefreshToken_Secret,
+        {
+            expiresIn:"01d"
         }
       )
 }

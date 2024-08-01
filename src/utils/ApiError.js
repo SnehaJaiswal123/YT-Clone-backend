@@ -4,6 +4,7 @@ class ApiError extends Error{
         message="Something Went Wrong",
         Errors=[]
       ){
+        console.log("Api Error");
         super(message)
         this.statusCode=statusCode
         this.message=message
@@ -13,4 +14,4 @@ class ApiError extends Error{
       }
 }
 
-export {ApiError}
+export default ApiError
