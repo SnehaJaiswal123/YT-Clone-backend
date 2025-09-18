@@ -4,30 +4,33 @@ import bcryptjs from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
 const userSchema=new mongoose.Schema({
-    username:{
+    fullName:{
         type:String,
-        required:true,
-        unique:true,
+        required:[true, 'Full Name is required']
+    },
+    userName:{
+        type:String,
+        required:[true, 'User Name is reuired'],
+        unique:[true, 'This username already exist'],
         lowercase:true,
         index:true
     },
     email:{
         type:String,
         required:true,
-        unique:true,
-        lowercase:true
-    },
-    fullname:{
-        type:String,
-        required:true,
-    },
-    avatar:{
-        type:String,
-        required:true,
+        unique:[true,'This email already exist'],
+        lowercase:[true, 'Email is required']
     },
     password:{
         type:String,
-        required:true
+        required:[true, 'Password is required']
+    },
+    avatar:{
+        type:String,
+        required:[true,'Avatar is required']
+    },
+    coverImage:{
+        type:String,
     },
     watchHistory:[
         {
@@ -45,26 +48,28 @@ const userSchema=new mongoose.Schema({
 
 userSchema.pre("save",async function(next){
       if(this.isModified("password")){
-        this.password=bcryptjs.hash(this.password,8)
+        this.password=await bcryptjs.hash(this.password,8)
       }
       next()
 })
 
-userSchema.methods.isPasswordCorrect = async function(password){
-    return  await bcryptjs.compare(this.password,password)
+userSchema.methods.isPasswordCorrect = async function(password){    
+    const isPassCorrect = await bcryptjs.compare(password, this.password)
+    console.log(isPassCorrect);
+    return isPassCorrect
+    
 }
 
-userSchema.methods.generateAccessToken =  function(){
+userSchema.methods.generateAccessToken = function(){
     return jwt.sign(
         {
             id:this._id,
-            email:this.email
         },
-        process.env.AcessToken_Secret,
+        process.env.AccessToken_Secret,
         {
             expiresIn:"1d"
         }
-      )
+    )
 }
 
 userSchema.methods.generateRefreshToken =  function(){

@@ -7,6 +7,6 @@ dotenv.config()
 connectDB()
 .then(()=>{
     console.log("Db Connected succesfully");
-    app.listen(process.env.PORT||3000,console.log("Server is running on port 3000"))
+    app.listen(process.env.PORT,console.log("Server is running"))
 })
 .catch((err)=>console.log("Db connection failed"))
