@@ -1,4 +1,3 @@
-// import mongoose from "../db/connect.js";
 import mongoose from "mongoose";
 import bcryptjs from 'bcryptjs'
 import jwt from 'jsonwebtoken'

@@ -1,4 +1,5 @@
 import User from "../models/user.models.js";
+import jwt from 'jsonwebtoken'
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
@@ -177,4 +178,98 @@ const login = async (req,res) => {
   }
 }
 
-export { Register, login };
+const refreshAccessToken = async (req,res) =>{
+  try{
+    const incomingRefreshToken=req.cookies?.refreshToken||req.headers('Authorization').split(" ")[1];
+
+    if(!incomingRefreshToken){
+      return res.status(401).json({
+        success:false,
+        message:"Unauthorized Access"
+      })
+    }
+
+    const decodedToken = jwt.verify(incomingRefreshToken, process.env.RefreshToken_Secret);
+
+    const user = user.findById(decodedToken?.id);
+
+    if(!user){
+      return res.status(401).json({
+        success:false,
+        message:"Invalid Refresh Token"
+      })
+    }
+
+    if(user.refreshToken!==incomingRefreshToken){
+      return res.status(401).json({
+        success:false,
+        message:"Unauthorized Access"
+      })
+    }
+
+    const {accessToken,refreshToken} = await genrateAcessAndRefreshToken(user._id)
+
+    const options={
+      httpOnly:true,
+      secure:true
+    }
+
+    return res
+    .status(200)
+    .cookie('accessToken',accessToken,options)
+    .cookie('refreshToken',refreshToken,options)
+    .json({
+      success:true,
+      message:"Access Token refreshed",
+    })
+  }
+  catch(err){
+    console.log("Error in refreshing access token:", err);
+    return res.status(500).json({
+      success:false,
+      message:"Refresh Token is not Valid"
+    })
+    
+  }
+}
+
+const logout = async (req,res) =>{
+  try{
+    const userId = req.user?._id;
+    
+    await User.findByIdAndUpdate(
+      userId,
+      {
+        $set:{
+          refreshToken:undefined
+        }
+      },
+      {
+        new:true
+      }
+    )
+
+    const options={
+      httpOnly:true,
+      secure:true
+    }
+    
+    return res
+    .status(200)
+    .clearCookie("accessToken",options)
+    .clearCookie("refreshToken",options)
+    .json({
+      success:true,
+      message:"Logout Successfully"
+    })
+  }
+  catch(err){
+    console.log("Error while logggin out",err);
+    return res.status(500).json({
+      success:false,
+      message:err.message
+    })
+  }
+}
+
+export { Register, login, logout, refreshAccessToken };
