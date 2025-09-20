@@ -3,7 +3,7 @@ import User from '../models/user.models.js';
 
 const jwtVerify = async (req,res,next) => {
   try{
-    const token = req.cookies?.accessToken || req.headers(Authorization)?.split(" ")[1];    
+    const token = req.cookies?.accessToken || req.header('Authorization')?.split(" ")[1];    
 
     if(!token){
       return res.status(404).json({

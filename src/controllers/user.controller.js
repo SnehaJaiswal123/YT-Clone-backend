@@ -272,4 +272,88 @@ const logout = async (req,res) =>{
   }
 }
 
-export { Register, login, logout, refreshAccessToken };
+const changeCurrentPass = async(req,res) =>{
+  try{
+    const {oldPass, newPass} = req.body;
+
+    if(!oldPass || !newPass){
+      return res.status(400).json({
+        success:false,
+        message:"Passwords are required"
+      })
+    }
+
+    const user = await User.findById(req.user?._id)
+    
+    const isPassCorrect = await user.isPasswordCorrect(oldPass);
+
+    if(!isPassCorrect){
+      return res.status(500).json({
+        success:false,
+        message:"Incorrect old password"
+      })
+    }
+
+    user.password = newPass;
+    await user.save();
+
+    return res.status(200).json({
+      success:true,
+      message:"Password changed successfully"
+    })
+  }
+  catch(err){
+    console.log("Error in changing pass", err);
+    return res.status(500).json({
+      success:false,
+      message:err.message
+    })
+  }
+}
+
+const updateAccountDetails = async (req,res) =>{
+  try{
+    const {fullName, userName, email} = req.body;
+
+    if(!fullName || !userName || !email){
+      return res.status(400).json({
+        success:false,
+        message:"All fields are required"
+      })
+    }
+
+    const user = await User.findByIdAndUpdate(
+          req.user?._id,
+          {
+            $set:{
+              fullName,
+              email,
+              userName
+            }
+          },
+          {
+            new:true
+          }
+        ).select("-password -refreshToken")
+    
+    return res.status(200).json({
+      success:true,
+      message:"Account details updated",
+      user
+    })
+  }
+  catch(err){
+    return res.status(500).json({
+      success:false,
+      message:err.message,
+    })
+  }
+}
+export { 
+  Register, 
+  login, 
+  logout, 
+  refreshAccessToken,
+  changeCurrentPass,
+  updateAccountDetails,
+ };
