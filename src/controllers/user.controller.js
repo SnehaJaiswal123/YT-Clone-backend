@@ -349,6 +349,102 @@ const updateAccountDetails = async (req,res) =>{
     })
   }
 }
+
+const updateAvatar = async (req,res) =>{
+  try{
+    const avatarLocalfilePath = req.file?.filename
+    
+    if(!avatarLocalfilePath){
+      return res.status(400).json({
+        success:false,
+        message:"Avatar is required"
+      })
+    }    
+
+    const user = await User.findByIdAndUpdate(
+      req.user?._id,
+      {
+        $set:{
+          avatar:avatarLocalfilePath
+        }
+      },
+      {
+        new:true
+      }
+    ).select("-password -refreshToken")
+
+    return res.status(200).json({
+      success:true,
+      message:"Avatar updated",
+      user
+    })
+  }
+  catch(err){
+    console.log("Error in updating Avatar",err);
+    return res.status(500).json({
+      success:false,
+      message:err.message
+    })
+  }
+}
+
+const updateCoverImage = async (req,res) =>{
+  try{
+    const coverLocalfilePath = req.file?.filename
+    
+    if(!coverLocalfilePath){
+      return res.status(400).json({
+        success:false,
+        message:"Cover Image is required"
+      })
+    }    
+
+    const user = await User.findByIdAndUpdate(
+      req.user?._id,
+      {
+        $set:{
+          coverImage:coverLocalfilePath
+        }
+      },
+      {
+        new:true
+      }
+    ).select("-password -refreshToken")
+
+    return res.status(200).json({
+      success:true,
+      message:"Cover Image updated",
+      user
+    })
+  }
+  catch(err){
+    console.log("Error in updating Cover Image",err);
+    return res.status(500).json({
+      success:false,
+      message:err.message
+    })
+  }
+}
+
+const getCurrentUser = async (req,res) =>{
+  try{
+    const user = await User.findById(req.user?._id).select("-password -refreshToken");
+
+    return res.status(200).json({
+      success:true,
+      message:"User retrieved",
+      user
+    })
+  }
+  catch(err){
+    console.log("Error in getting current user:",err);
+    return res.status(500).json({
+      success:false,
+      message:err.message
+    })
+  }
+}
+
 export { 
   Register, 
   login, 
@@ -356,4 +452,7 @@ export {
   refreshAccessToken,
   changeCurrentPass,
   updateAccountDetails,
+  updateAvatar,
+  updateCoverImage,
+  getCurrentUser
  };
