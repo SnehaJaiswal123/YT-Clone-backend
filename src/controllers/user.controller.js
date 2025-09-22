@@ -1,4 +1,5 @@
 import User from "../models/user.models.js";
+import Subscription from "../models/subscriptions.models.js";
 import jwt from 'jsonwebtoken'
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiError from "../utils/ApiError.js";
@@ -240,8 +241,8 @@ const logout = async (req,res) =>{
     await User.findByIdAndUpdate(
       userId,
       {
-        $set:{
-          refreshToken:undefined
+        $unset:{
+          refreshToken:1
         }
       },
       {
@@ -445,6 +446,37 @@ const getCurrentUser = async (req,res) =>{
   }
 }
 
+const subscribeToChannel = async (req,res) =>{
+  try {
+    const {channelId} = req.body;
+    const subscriberId = req.user?.id;    
+
+    if(!channelId || !subscriberId){
+      return res.status(404).json({
+        success:false,
+        message:"Channel id and subscriber id is required"
+      })
+    }
+
+    const newSubscription = await Subscription.create({
+      channel:channelId,
+      subscriber:subscriberId
+    })
+
+    return res.status(201).json({
+      success:true,
+      message:"Subscribed successfully",
+      newSubscription
+    })
+  } catch (error) {
+    console.log("Error in subscribing:",error);   
+    return res.status(500).json({
+      success:false,
+      Error:error.msg
+    })
+  }
+}
+
 export { 
   Register, 
   login, 
@@ -454,5 +486,6 @@ export {
   updateAccountDetails,
   updateAvatar,
   updateCoverImage,
-  getCurrentUser
+  getCurrentUser,
+  subscribeToChannel
  };
