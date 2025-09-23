@@ -12,10 +12,7 @@ const jwtVerify = async (req,res,next) => {
       })
     }
         
-    const decodedToken = jwt.verify(token,process.env.AccessToken_Secret);
-
-    console.log(decodedToken);
-    
+    const decodedToken = jwt.verify(token,process.env.AccessToken_Secret);    
 
     const user = await User.findById(decodedToken?.id).select("-password -refreshToken")
 

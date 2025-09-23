@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken'
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
+import mongoose from "mongoose";
 
 
 const Register = async (req,res) => {
@@ -477,6 +478,80 @@ const subscribeToChannel = async (req,res) =>{
   }
 }
 
+const getChannelProfile = async (req,res) =>{
+  try {
+    const userId = req.params.userId;    
+
+    const result = await User.aggregate([
+      {
+        $match:{
+          _id:new mongoose.Types.ObjectId(userId)
+        }
+      },
+      {
+        $lookup:{
+          from:'subscribes',
+          localField:'_id',
+          foreignField:'channel',
+          as:'subscribers'
+        }
+      },
+      {
+        $lookup:{
+          from:'subscribes',
+          localField:'_id',
+          foreignField:'subscriber',
+          as:'subscribedTo'
+        }
+      },
+      {
+        $addFields:{
+          subscriberCount:{
+            $size:"$subscribers"
+          },
+          subscribedToCount:{
+            $size:"$subscribedTo"
+          }
+        }
+      },
+      {
+        $project:{
+          fullName:1,
+          userName:1,
+          email:1,
+          subscriberCount:1,
+          subscribedToCount:1,
+        }
+      }
+    ])
+
+    return res.status(200).json({
+      success:true,
+      profile:result
+    })
+
+  } catch (error) {
+    console.log("Error in getting channel profile:",error);
+    return res.status(500).json({
+      success:false,
+      message:"Error in fetching channel profile",
+      error:error.msg
+    })
+  }
+}
+const getWatchHistory = async (req,res) =>{
+  try {
+    
+  } catch (error) {
+    console.log("Error in getting user history:",error);
+    return res.status(500).json({
+      success:false,
+      message:"Error in fetching user history",
+      error:error.msg
+    })
+  }
+}
+
 export { 
   Register, 
   login, 
@@ -487,5 +562,7 @@ export {
   updateAvatar,
   updateCoverImage,
   getCurrentUser,
-  subscribeToChannel
+  subscribeToChannel,
+  getChannelProfile,
+  getWatchHistory
  };

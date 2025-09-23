@@ -1,6 +1,6 @@
 import { Router } from "express";
 const router=Router();
-import { Register, changeCurrentPass, login, logout, refreshAccessToken, updateAccountDetails, updateAvatar, updateCoverImage, getCurrentUser,subscribeToChannel} from "../controllers/user.controller.js";
+import { Register, changeCurrentPass, login, logout, refreshAccessToken, updateAccountDetails, updateAvatar, updateCoverImage, getCurrentUser,subscribeToChannel, getChannelProfile} from "../controllers/user.controller.js";
 import upload from "../middlewares/multer.js";
 import jwtVerify from "../middlewares/jwtVerify.js";
 
@@ -14,5 +14,6 @@ router.post('/updateDetails', jwtVerify, updateAccountDetails);
 router.post('/updateAvatar', jwtVerify, upload.single('avatar'), updateAvatar);
 router.post('/updateCoverImage', jwtVerify, upload.single('coverImage'), updateCoverImage);
 router.post('/subscribe', jwtVerify, subscribeToChannel);
+router.get('/channelProfile/:userId', jwtVerify, getChannelProfile);
 
 export default router
