@@ -1,4 +1,4 @@
-import mongoose from "../db/connect";
+import mongoose from "mongoose";
 
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 
@@ -17,10 +17,6 @@ const videoSchema=new mongoose.Schema({
     },
     description:{
         type:String,
-        required:true
-    },
-    duration:{
-        type:Number,
         required:true
     },
     views:{
@@ -42,6 +38,7 @@ const videoSchema=new mongoose.Schema({
 }
 )
 
+videoSchema.plugin(mongooseAggregatePaginate)
 
 const Video = mongoose.model('Video',videoSchema)
 
