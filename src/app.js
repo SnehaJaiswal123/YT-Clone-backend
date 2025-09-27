@@ -8,7 +8,9 @@ app.use(cookieParser())
 
 import userRouter from './routes/user.routes.js'
 import videoRouter from './routes/video.routes.js'
+import subscriptionRouter from './routes/subscription.routes.js'
 app.use('/api/users',userRouter)
 app.use('/api/videos',videoRouter)
+app.use('/api/subscriptions',subscriptionRouter)
 
 export {app}
