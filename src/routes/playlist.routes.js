@@ -13,6 +13,6 @@ router.route('/:playlisId')
 router.post('/', createPlaylist)
 router.get('/user/:userId', getUserPlaylists)
 router.patch('/addVideo/:videoId/:playlistId', addVideoToPlaylist)
-router.patch('/addVideo/:videoId/:playlistId', removeVideoFromPlaylist)
+router.patch('/removeVideo/:videoId/:playlistId', removeVideoFromPlaylist)
 
 export default router

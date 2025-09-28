@@ -8,9 +8,11 @@ router.get('/',getAllVideos)
 router.post('/', jwtVerify,
    upload.fields([{name:'video',maxCount:1},{name:'thumbnail',maxCount:1}]),
    publishVideo)
-router.get('/getVideo/:videoId', jwtVerify, getVideoById)
 router.patch('/togglePublishStatus/:videoId', jwtVerify, togglePublishStatus)
-router.patch('/updateVideo/:videoId', jwtVerify, updateVideo)
-router.delete('/deleteVideo/:videoId', jwtVerify, deleteVideo)
+
+router.route('/:videoId')
+router.get(jwtVerify, getVideoById)
+router.patch(jwtVerify, updateVideo)
+router.delete(jwtVerify, deleteVideo)
 
 export default router
