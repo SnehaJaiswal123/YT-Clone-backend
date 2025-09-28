@@ -19,9 +19,8 @@ const playlistSchema = new mongoose.Schema(
     videos:[
       {
       type:mongoose.Schema.Types.ObjectId,
-      ref:'Video',
-      required:true
-      }
+      ref:'Video'      
+     }
     ]
   },
   {

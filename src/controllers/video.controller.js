@@ -3,25 +3,25 @@ import Video from "../models/video.models.js"
 
 const getAllVideos = async (req, res) => {
     try {
-      const { page = 1, limit = 10, search, sortBy, sortType, userId } = req.query
+      const { page = 1, limit = 10, search, userId, sortBy, sortType } = req.query
 
-      const filter = {};
+      const filter = {
+        isPublished:true
+      };
       if(search) filter.description = { $regex: new RegExp(search, 'i') }
-      if(userId) filter._id = { $regex: new RegExp(search, 'i') }
+      if(userId) filter.owner = new mongoose.Types.ObjectId(userId)
       
-      const sortFields={};
+      const sortFields={
+        title:1
+      };
       if(sortType) sortFields[sortType]=1;
-      if(sortBy) sortFields[sortType]=sortBy;
-
-
-      const aggregate =await Video.aggregate([
+      if(sortBy) sortFields[sortType]=(sortBy=='asc')?1:-1;
+      
+      let aggregate = Video.aggregate([
         {
           $match:filter
-        },
-        {
-          $sort:sortFields
         }
-      ])
+      ]);
  
       const options={
         page,
@@ -33,7 +33,35 @@ const getAllVideos = async (req, res) => {
       return res.status(200).json({
         succes:true,
         message:"Fetched Videos",
-        videos
+        videos:videos.docs
+      })
+      
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        succes:false,
+        message:"Error in fetching videos",
+        error:error._message
+      })
+    }
+}
+
+const getUserAllVideos = async (req, res) => {
+    try {
+      
+      const userId = req.params
+ 
+      const options={
+        page,
+        limit
+      }
+      
+      const videos =await Video.aggregatePaginate(aggregate,options)
+
+      return res.status(200).json({
+        succes:true,
+        message:"Fetched Videos",
+        videos:videos.docs
       })
       
     } catch (error) {

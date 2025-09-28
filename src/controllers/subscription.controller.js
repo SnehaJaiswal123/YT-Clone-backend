@@ -2,7 +2,7 @@ import mongoose from "mongoose"
 import User from "../models/user.models.js"
 import Subscribe from "../models/subscriptions.models.js"
 
-const toggleSubscription = (async (req, res) => {
+const toggleSubscription = async (req, res) => {
   try {
     const {channelId} = req.params
     const subsriberId = req.user?._id;
@@ -39,7 +39,7 @@ const toggleSubscription = (async (req, res) => {
       error:error.message
     })
   }
-})
+}
 
 // controller to return subscriber list of a channel
 const getUserChannelSubscribers = async (req,res) =>{
@@ -85,7 +85,7 @@ const getUserChannelSubscribers = async (req,res) =>{
 }
 
 // controller to return channel list to which user has subscribed
-const getSubscribedChannels = (async (req, res) => {
+const getSubscribedChannels = async (req, res) => {
   try {
     const {subscriberId} = req.params
     
@@ -125,7 +125,7 @@ const getSubscribedChannels = (async (req, res) => {
       error:err.message
     })
   }
-})
+}
 
 export {
     toggleSubscription,
