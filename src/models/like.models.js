@@ -7,11 +7,11 @@ const likeSchema = new mongoose.Schema(
       type:mongoose.Schema.Types.ObjectId,
       ref:'User'
     },
-    Video:{
+    videoId:{
       type:mongoose.Schema.Types.ObjectId,
       ref:'Video'
     },
-    Comment:{
+    CommentId:{
       type:mongoose.Schema.Types.ObjectId,
       ref:'Comment'
     }
